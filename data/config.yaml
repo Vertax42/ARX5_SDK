@@ -1,0 +1,58 @@
+# AC_one机器人数据采集配置文件
+
+# 相机配置
+camera_config:
+  # 相机设备路径映射
+  devices:
+    camera_1: "/dev/video2"
+    camera_2: "/dev/video4"
+    camera_3: "/dev/video6"
+
+  # 相机参数
+  resolution:
+    width: 640
+    height: 480
+  fps: 30
+  color_mode: "RGB"
+
+# 机械臂配置
+arm_config:
+  # 左臂配置
+  left_arm:
+    model: "X5"
+    interface: "can0"
+
+  # 右臂配置
+  right_arm:
+    model: "X5"
+    interface: "can1"
+
+  # 控制参数
+  control_dt: 0.01
+  use_multithreading: true
+
+# 数据采集配置
+data_collection:
+  # 默认参数
+  max_timesteps: 800
+  frame_rate: 30
+
+  # 数据保存
+  save_format: "hdf5"
+  image_compression_quality: 50
+
+  # 自动停止条件
+  auto_stop_threshold: 0.1 # 关节位置变化阈值
+  auto_stop_min_frames: 100 # 最小帧数
+
+# 系统配置
+system:
+  # 日志级别
+  log_level: "INFO"
+
+  # 数据目录
+  data_dir: "datasets"
+
+  # 备份配置
+  backup_enabled: true
+  backup_interval: 10 # episodes
