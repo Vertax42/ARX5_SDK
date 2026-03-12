@@ -65,7 +65,7 @@ echo "✓ Build succeeded: ${SO_FILE}"
 # ── Install ──────────────────────────────────────────────────────────────────
 echo ""
 echo "Installing pyarx as editable package..."
-uv pip install -e "${SCRIPT_DIR}" --no-build-isolation --quiet
+uv pip install -e "${SCRIPT_DIR}" --no-build-isolation
 
 echo ""
 echo "✓ pyarx installed. Verify with:"
