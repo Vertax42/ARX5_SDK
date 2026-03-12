@@ -5,8 +5,7 @@
 #
 # Requirements:
 #   conda activate lerobot   (pybind11, eigen, orocos-kdl,
-#                             ros-jazzy-kdl-parser, ninja, soem)
-#   System: /usr/local/lib/libspdlog.a (spdlog 1.14.1, fmt::v10 bundled)
+#                             ros-jazzy-kdl-parser, ninja, soem, spdlog)
 #
 # Usage:
 #   cd src/lerobot/robots/bi_arx5/ARX5_SDK
@@ -43,7 +42,7 @@ cmake \
     -B "${BUILD_DIR}" \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_PREFIX_PATH="/usr/local;${CONDA_PREFIX}" \
+    -DCMAKE_PREFIX_PATH="${CONDA_PREFIX}" \
     -DSPDLOG_FMT_EXTERNAL=OFF \
     -DCMAKE_BUILD_RPATH="${CONDA_PREFIX}/lib" \
     -DCMAKE_INSTALL_RPATH="${CONDA_PREFIX}/lib" \

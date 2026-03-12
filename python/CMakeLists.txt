@@ -1,15 +1,8 @@
 cmake_minimum_required( VERSION 3.16.3 )
 
-# ---------------------------------------------------------------------------
-# Prefer conda environment packages over system packages — EXCEPT for spdlog.
-# The conda PyPI spdlog package installs spdlog 1.10.0 C++ headers at
-#   $CONDA_PREFIX/include/python3.12/spdlog/
-# which shadow the system spdlog 1.14.1 at /usr/local/include/spdlog/.
-# We deliberately do NOT prepend CONDA_PREFIX so that cmake finds the system
-# spdlog 1.14.1 first via /usr/local/lib/cmake/spdlog.
-# ---------------------------------------------------------------------------
+# Prefer conda-managed dependencies over system packages.
 if(DEFINED ENV{CONDA_PREFIX})
-    list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
+    list(PREPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 endif()
 
 # ---------------------------------------------------------------------------
@@ -32,14 +25,6 @@ find_package(spdlog REQUIRED)
 set(CMAKE_BUILD_RPATH   "$ENV{CONDA_PREFIX}/lib")
 set(CMAKE_INSTALL_RPATH "$ENV{CONDA_PREFIX}/lib")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# ---------------------------------------------------------------------------
-# Force system spdlog 1.14.1 headers (fmt::v10) to come before conda's
-# python3.12/spdlog headers (fmt::v8 from PyPI spdlog 2.0.6/1.10.0).
-# Pybind11 adds -isystem $CONDA_PREFIX/include/python3.12 which would
-# otherwise shadow /usr/local/include/spdlog and cause an ABI mismatch.
-# ---------------------------------------------------------------------------
-include_directories(BEFORE /usr/local/include)
 
 pybind11_add_module(_arx5_interface
 arx5_pybind.cpp

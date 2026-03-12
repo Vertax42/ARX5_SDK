@@ -7,18 +7,10 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON) # global PIC
 
-# ---------------------------------------------------------------------------
-# For spdlog we need the system spdlog 1.14.1 (at /usr/local) rather than
-# the conda PyPI spdlog 2.0.6 package which wraps spdlog 1.10.0 headers.
-# Append (not prepend) CONDA_PREFIX so /usr/local/lib/cmake/spdlog wins.
-# ---------------------------------------------------------------------------
+# Prefer conda-managed dependencies over system packages.
 if(DEFINED ENV{CONDA_PREFIX})
-    list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
+    list(PREPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 endif()
-
-# Force system spdlog 1.14.1 include dir to come first so its fmt::v10
-# bundled headers are used rather than the PyPI spdlog 1.10.0 (fmt::v8).
-include_directories(BEFORE /usr/local/include)
 
 # Use spdlog's bundled fmt. MUST be set before find_package(spdlog).
 set(SPDLOG_FMT_EXTERNAL OFF CACHE BOOL "Use spdlog bundled fmt, not system fmt" FORCE)
