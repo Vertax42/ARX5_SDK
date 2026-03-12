@@ -367,12 +367,11 @@ JointState JointStateInterpolator::interpolate(double time)
                     vel_a * start_state.pos + vel_b * start_state.vel + vel_c * end_state.pos + vel_d * end_state.vel;
                 return interp_result;
             }
-        }
-        if (i == traj_.size() - 2)
-        {
-            throw std::runtime_error("Interpolation failed");
+            throw std::runtime_error("Unknown interpolation method: " + method_);
         }
     }
+
+    throw std::runtime_error("Interpolation failed");
 }
 
 std::string JointStateInterpolator::to_string()
