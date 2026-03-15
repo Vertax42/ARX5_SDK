@@ -74,7 +74,7 @@ class Arx5Solver
         {KDL::SolverI::E_OUT_OF_RANGE, "E_OUT_OF_RANGE"},
         {KDL::SolverI::E_NOT_IMPLEMENTED, "E_NOT_IMPLEMENTED"},
         {KDL::SolverI::E_SVD_FAILED, "E_SVD_FAILED"},
-        {E_EXCEED_JOITN_LIMIT, "E_EXCEED_JOITN_LIMIT"}};
+        {E_EXCEED_JOITN_LIMIT, "E_EXCEED_JOINT_LIMIT"}};
 
     // These variables should be class members and will be used when solvers are called.
     KDL::Tree tree_;

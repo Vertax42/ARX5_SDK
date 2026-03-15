@@ -85,6 +85,9 @@ void RV_can_data_repack(uint32_t msgID, uint8_t *Data, int32_t databufferlen, ui
                         std::array<OD_Motor_Msg, 10> &motor_msg);
 void DM_can_data_repack(uint8_t *Data, std::array<OD_Motor_Msg, 10> &motor_msg);
 
+// Forward declaration for EtherCat2Can internal state
+struct EcatState;
+
 class CanInterface
 {
   public:
@@ -92,6 +95,10 @@ class CanInterface
     const std::array<OD_Motor_Msg, 10> get_motor_msg();
     virtual bool is_open() = 0;
     void can_receive_frame(can_frame_t *frame);
+
+  protected:
+    std::array<OD_Motor_Msg, 10> motor_msg_{};
+    std::mutex motor_msg_mutex_;
 };
 
 class Usb2Can : public CanInterface
@@ -102,7 +109,12 @@ class Usb2Can : public CanInterface
 
     void transmit(can_frame_t &frame) override;
     bool is_open() override;
+
+  private:
+    std::string interface_name_;
+    SocketCAN   socketcan_;
 };
+
 class EtherCat2Can : public CanInterface
 {
   public:
@@ -111,7 +123,12 @@ class EtherCat2Can : public CanInterface
 
     void transmit(can_frame_t &frame) override;
     bool is_open() override;
+
+  private:
+    std::string              interface_name_;
+    std::unique_ptr<EcatState> ecat_;
 };
+
 class ArxCan
 {
   public:
@@ -132,6 +149,9 @@ class ArxCan
     void clear(uint16_t ID);
 
     const std::array<OD_Motor_Msg, 10> get_motor_msg();
+
+  private:
+    std::shared_ptr<CanInterface> can_interface_;
 };
 
 #endif
