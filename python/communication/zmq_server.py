@@ -8,7 +8,7 @@ os.chdir(ROOT_DIR)
 import time
 from typing import Any, cast
 
-import arx5_interface as arx5
+import pyarx as arx5
 import zmq
 import click
 import sys

@@ -10,7 +10,7 @@ sys.path.append(ROOT_DIR)
 os.chdir(ROOT_DIR)
 
 # 必须在路径设置后导入
-import arx5_interface as arx5  # noqa: E402
+import pyarx as arx5  # noqa: E402
 
 
 def linear_func(t):

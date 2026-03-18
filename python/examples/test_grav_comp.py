@@ -11,7 +11,7 @@ sys.path.append(ROOT_DIR)
 os.chdir(ROOT_DIR)
 
 # Import after path setup - this is required for the SDK
-import arx5_interface as arx5  # noqa: E402
+import pyarx as arx5  # noqa: E402
 
 
 # 移除了 easeInOutQuad 函数，因为不再需要运动控制
