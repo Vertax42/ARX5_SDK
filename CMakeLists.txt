@@ -21,6 +21,49 @@ find_package(orocos_kdl REQUIRED)
 find_package(kdl_parser REQUIRED)
 find_package(spdlog REQUIRED)
 
+message(STATUS "spdlog version: ${spdlog_VERSION}")
+get_target_property(_SPDLOG_INC spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "spdlog include dirs: ${_SPDLOG_INC}")
+get_target_property(_SPDLOG_LIBS spdlog::spdlog INTERFACE_LINK_LIBRARIES)
+message(STATUS "spdlog link libs: ${_SPDLOG_LIBS}")
+if(TARGET fmt::fmt)
+    get_target_property(_FMT_INC fmt::fmt INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "fmt include dirs: ${_FMT_INC}")
+    message(STATUS "fmt version: ${fmt_VERSION}")
+else()
+    message(STATUS "fmt: using spdlog bundled fmt (no external fmt::fmt target)")
+endif()
+
+# ---------------------------------------------------------------------------
+# Avoid python-site spdlog header pollution
+# ---------------------------------------------------------------------------
+# In some conda setups, spdlog's CMake package may contribute include paths
+# from: $CONDA_PREFIX/include/python3.x/spdlog.
+# Those headers can shadow conda's C++ spdlog headers (and can break
+# spdlog/fmt compatibility). For our ARX5_SDK build we want to use only
+# headers coming from: $CONDA_PREFIX/include (not the python-specific tree).
+if(DEFINED ENV{CONDA_PREFIX})
+    set(_ARX5_CONDA_INCLUDE_DIR "$ENV{CONDA_PREFIX}/include")
+
+    # Filter imported target include dirs to remove python3.x include tree.
+    if(TARGET spdlog::spdlog)
+        get_target_property(_ARX5_SPDLOG_INC spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
+        if(_ARX5_SPDLOG_INC)
+            set(_ARX5_SPDLOG_INC_FILTERED "")
+            foreach(_d IN LISTS _ARX5_SPDLOG_INC)
+                if(NOT _d MATCHES "include/python3\\.[0-9]+/spdlog")
+                    list(APPEND _ARX5_SPDLOG_INC_FILTERED "${_d}")
+                endif()
+            endforeach()
+            # Also ensure conda include dir is present.
+            if(NOT _ARX5_CONDA_INCLUDE_DIR IN_LIST _ARX5_SPDLOG_INC_FILTERED)
+                list(APPEND _ARX5_SPDLOG_INC_FILTERED "${_ARX5_CONDA_INCLUDE_DIR}")
+            endif()
+            set_target_properties(spdlog::spdlog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_ARX5_SPDLOG_INC_FILTERED}")
+        endif()
+    endif()
+endif()
+
 # ---------------------------------------------------------------------------
 # RPATH: embed conda lib dir so the built .so files find spdlog at runtime
 # without needing LD_LIBRARY_PATH.
@@ -42,7 +85,13 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(
-    $ENV{CONDA_PREFIX}/include/
+    # IMPORTANT:
+    # Do NOT add $ENV{CONDA_PREFIX}/include/ wholesale here.
+    # It can shadow the spdlog headers selected by find_package(spdlog)
+    # (and therefore break spdlog/fmt compatibility), because our build
+    # relies on spdlog's bundled fmt (see SPDLOG_FMT_EXTERNAL OFF).
+    #
+    # Keep only the specific conda-provided header dirs that are required.
     $ENV{CONDA_PREFIX}/include/urdfdom_headers
 )
 

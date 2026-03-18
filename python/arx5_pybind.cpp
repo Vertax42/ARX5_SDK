@@ -110,6 +110,7 @@ PYBIND11_MODULE(_arx5_interface, m)
         .def("multi_trial_ik", &Arx5Solver::multi_trial_ik);
     py::class_<RobotConfig>(m, "RobotConfig")
         .def_readwrite("robot_model", &RobotConfig::robot_model)
+        .def_readwrite("interface_name", &RobotConfig::interface_name)
         .def_readwrite("joint_pos_min", &RobotConfig::joint_pos_min)
         .def_readwrite("joint_pos_max", &RobotConfig::joint_pos_max)
         .def_readwrite("joint_vel_max", &RobotConfig::joint_vel_max)

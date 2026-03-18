@@ -5,7 +5,7 @@
 #
 # Requirements:
 #   conda activate lerobot   (pybind11, eigen, orocos-kdl,
-#                             ros-jazzy-kdl-parser, ninja, soem, spdlog)
+#                             ros-humble-kdl-parser, ros-humble-ament-cmake, ninja, soem, spdlog)
 #
 # Usage:
 #   cd src/lerobot/robots/bi_arx5/ARX5_SDK
@@ -64,7 +64,7 @@ echo "✓ Build succeeded: ${SO_FILE}"
 # ── Install ──────────────────────────────────────────────────────────────────
 echo ""
 echo "Installing pyarx as editable package..."
-uv pip install -e "${SCRIPT_DIR}" --no-build-isolation
+uv pip install -e "${SCRIPT_DIR}"
 
 echo ""
 echo "✓ pyarx installed. Verify with:"
