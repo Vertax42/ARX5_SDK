@@ -17,9 +17,9 @@ Arx5ControllerBase::Arx5ControllerBase(RobotConfig robot_config, ControllerConfi
 {
     start_time_us_ = get_time_us();
     logger_->set_pattern("[%H:%M:%S %n %^%l%$] %v");
-    solver_ = std::make_shared<Arx5Solver>(
+    solver_ = std::shared_ptr<Arx5Solver>(new Arx5Solver(
         robot_config_.urdf_path, robot_config_.joint_dof, robot_config_.joint_pos_min, robot_config_.joint_pos_max,
-        robot_config_.base_link_name, robot_config_.eef_link_name, robot_config_.gravity_vector);
+        robot_config_.base_link_name, robot_config_.eef_link_name, robot_config_.gravity_vector));
     if (robot_config_.robot_model == "X5" && !controller_config_.shutdown_to_passive)
     {
         logger_->warn("When shutting down X5 robot arms, the motors have to be set to passive. "
