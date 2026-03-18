@@ -21,3 +21,6 @@ python/data/
 # IDE
 .vscode/
 .idea/
+
+# CMake compile commands cache
+.cache/
