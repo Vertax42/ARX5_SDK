@@ -73,6 +73,25 @@ sudo setcap "cap_net_admin,cap_net_raw=eip" build/test_cartesian_controller
 sudo setcap "cap_net_admin,cap_net_raw=eip" build/test_joint_controller
 ```
 
+### Optional: real-time scheduling for the CAN thread (`CAP_SYS_NICE`)
+
+The controller attempts `pthread_setschedparam(..., SCHED_FIFO, 80)` on the background CAN thread. Without **`CAP_SYS_NICE`** (or root), Linux returns **EPERM (errno 1)** — **this is expected**; the arm still runs with normal scheduling.
+
+To enable SCHED_FIFO (optional, may reduce CAN jitter under load):
+
+```sh
+# Use the real interpreter path (symlinks from `which python` may not work with setcap)
+python3 -c "import sys; print(sys.executable)"
+sudo setcap cap_sys_nice+ep /path/to/your/conda/envs/ENV/bin/python3.12
+```
+
+You can combine with EtherCAT capabilities on the same binary:
+
+```sh
+sudo setcap "cap_net_admin,cap_net_raw,cap_sys_nice+eip" /path/to/conda/envs/ENV/bin/python3.12
+getcap /path/to/conda/envs/ENV/bin/python3.12
+```
+
 ## USB-CAN setup
 
 You can skip this step if you have already set up the EtherCAT-CAN adapter.

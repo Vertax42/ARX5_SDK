@@ -38,7 +38,11 @@ Arx5ControllerBase::Arx5ControllerBase(RobotConfig robot_config, ControllerConfi
     if (ret == 0) {
         logger_->info("Successfully set CAN thread to real-time priority SCHED_FIFO:80");
     } else {
-        logger_->warn("Failed to set real-time priority (error: {}). Need root or CAP_SYS_NICE capability. Using default priority.", ret);
+        // EPERM without CAP_SYS_NICE / root is normal; CAN still works at default scheduling.
+        logger_->info(
+            "CAN thread using default scheduling (could not set SCHED_FIFO:80, errno {}). "
+            "Optional: grant CAP_SYS_NICE to Python/binary — see ARX5_SDK README (Optional: real-time scheduling).",
+            ret);
     }
 }
 
